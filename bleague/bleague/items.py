@@ -7,6 +7,10 @@ import scrapy
 
 
 class BleagueItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    year = scrapy.Field()
+    month = scrapy.Field()
+    day = scrapy.Field()
+    start_time = scrapy.Field()
+    home = scrapy.Field()
+    away = scrapy.Field()
+    arena = scrapy.Field()
