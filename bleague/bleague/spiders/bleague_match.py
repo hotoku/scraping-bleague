@@ -59,12 +59,14 @@ class BleagueMatchSpider(scrapy.Spider):
             '//span[contains(@class, "team home")]//text()').getall()
         aways = matches.xpath(
             '//span[contains(@class, "team away")]//text()').getall()
-        arenas = matches.xpath(
-            '//div[contains(@class, info)]/span[position()=2]/text()').getall()[2:]
-        start = matches.xpath(
-            '//div[contains(@class, info)]/span[position()=3]/text()').getall()
+        arenas = response.xpath(
+            '//span[parent::div[@class = "info-arena"] and position()=2]/text()').getall()
+        start = response.xpath(
+            '//span[parent::div[@class = "info-arena"] and position()=3]/text()').getall()
 
         query = parse_query(response.url)
+        # from scrapy.shell import inspect_response
+        # inspect_response(response, self)
 
         for h, a, ar, s in zip(homes, aways, arenas, start):
             print("match data",

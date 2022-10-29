@@ -25,12 +25,14 @@ class Db:
 
 _con = Db.get()
 _con.cursor().executescript("""
+drop table if exists matches;
 create table if not exists matches
 (
   id integer primary key,
   year integer not null,
   month integer not null,
   day integer not null,
+  dow text not null,
   start_time text not null,
   home text not null,
   away text not null,
@@ -49,15 +51,19 @@ class BleaguePipeline:
         if not isinstance(item, BleagueItem):
             return item
         con = Db.get()
+        d = date(int(item["year"]), int(item["month"]), int(item["day"]))
+
         con.cursor().execute("""
         insert into matches (
-        year, month, day,
-        start_time, home, away, arena
+        year,       month, day,  dow,
+        start_time, home,  away, arena
         ) values (
-        ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?,
+        ?, ?, ?, ?
         )
         """, [
-            item["year"], item["month"], item["day"],
+            int(item["year"]), int(item["month"]), int(item["day"]),
+            self.dow[d.weekday()],
             item["start_time"], item["home"], item["away"], item["arena"]
         ])
         con.commit()
