@@ -53,16 +53,17 @@ class BleagueMatchSpider(scrapy.Spider):
         if not isinstance(response, HtmlResponse):
             return
 
-        xpath = '//ul[contains(@class, "round-list")]/li[contains(@class, "list-item")]'
+        xpath = """//ul[contains(@class, "round-list")]
+                    /li[contains(@class, "list-item")]"""
         matches = response.xpath(xpath)
         homes = matches.xpath(
             '//span[contains(@class, "team home")]//text()').getall()
         aways = matches.xpath(
             '//span[contains(@class, "team away")]//text()').getall()
-        arenas = response.xpath(
-            '//span[parent::div[@class = "info-arena"] and position()=2]/text()').getall()
-        start = response.xpath(
-            '//span[parent::div[@class = "info-arena"] and position()=3]/text()').getall()
+        arenas = response.xpath("""//span[parent::div[@class="info-arena"] and
+                                          position()=2]/text()""").getall()
+        start = response.xpath("""//span[parent::div[@class="info-arena"] and
+                                          position()=3]/text()""").getall()
 
         query = parse_query(response.url)
         # from scrapy.shell import inspect_response
