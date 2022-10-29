@@ -5,9 +5,60 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+# from itemadapter import ItemAdapter
+
+import sqlite3
+from datetime import date
+
+from .items import BleagueItem
+
+
+class Db:
+    path: str = "db.sqlite"
+
+    @classmethod
+    def get(cls):
+        con = sqlite3.connect(cls.path)
+        con.row_factory = sqlite3.Row
+        return con
+
+
+_con = Db.get()
+_con.cursor().executescript("""
+create table if not exists matches
+(
+  id integer primary key,
+  year integer not null,
+  month integer not null,
+  day integer not null,
+  start_time text not null,
+  home text not null,
+  away text not null,
+  arena text not null default ""
+)
+""")
 
 
 class BleaguePipeline:
-    def process_item(self, item, spider):
+    dow = [
+        "sun", "mon", "tue", "wed",
+        "thu", "fri", "sat"
+    ]
+
+    def process_item(self, item, _):
+        if not isinstance(item, BleagueItem):
+            return item
+        con = Db.get()
+        con.cursor().execute("""
+        insert into matches (
+        year, month, day,
+        start_time, home, away, arena
+        ) values (
+        ?, ?, ?, ?, ?, ?, ?
+        )
+        """, [
+            item["year"], item["month"], item["day"],
+            item["start_time"], item["home"], item["away"], item["arena"]
+        ])
+        con.commit()
         return item
