@@ -43,8 +43,8 @@ create table if not exists matches
 
 class BleaguePipeline:
     dow = [
-        "sun", "mon", "tue", "wed",
-        "thu", "fri", "sat"
+        "mon", "tue", "wed",
+        "thu", "fri", "sat", "sun"
     ]
 
     def process_item(self, item, _):
